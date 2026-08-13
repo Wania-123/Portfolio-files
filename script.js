@@ -6,7 +6,7 @@
 // (country code + number, no +, spaces, or leading 0).
 // Example for Pakistan: "923001234567"
 // ==========================================================
-const WHATSAPP_NUMBER = "92XXXXXXXXXX";
+const WHATSAPP_NUMBER = "923355777839";
 const PSYCHOLOGIST_NAME = "Sadia Sikander";
 const WHATSAPP_MESSAGE = `Hello, I would like to book an appointment with ${PSYCHOLOGIST_NAME}.`;
 
