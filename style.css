@@ -290,9 +290,128 @@ body {
 .hero__trust-icon { color: var(--color-accent); font-size: 0.6rem; }
 
 .hero__visual { display: flex; justify-content: center; }
-.hero__art { width: 100%; max-width: 420px; }
-.hero__rings { animation: spin 46s linear infinite; transform-origin: 210px 230px; }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==========================================================
+   IMAGE FRAMES (with graceful placeholder fallback)
+   ========================================================== */
+.img-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.img-frame__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .5s var(--ease);
+}
+.img-frame:hover .img-frame__img:not(.is-broken) { transform: scale(1.035); }
+.img-frame__img.is-broken { display: none; }
+
+.img-frame__placeholder {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--color-primary-light);
+  background:
+    repeating-linear-gradient(135deg, var(--color-surface) 0 14px, var(--color-surface-2) 14px 28px);
+  border: 1.5px dashed var(--color-line-strong);
+  border-radius: inherit;
+}
+.img-frame__placeholder.is-visible { display: flex; }
+.img-frame__placeholder svg { width: 40px; height: 40px; opacity: 0.6; }
+.img-frame__filename {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-ink-soft);
+  background: var(--color-surface-2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+}
+
+/* Portrait crop (hero / about) */
+.img-frame--portrait { aspect-ratio: 4 / 5; width: 100%; max-width: 420px; margin: 0 auto; }
+
+/* Hero gets a decorative ring around the frame */
+.img-frame--hero { max-width: 380px; }
+.img-frame__ring {
+  position: absolute;
+  inset: -14px;
+  border: 1.4px dashed var(--color-accent);
+  border-radius: calc(var(--radius-lg) + 14px);
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: -1;
+}
+
+/* Landscape crop (services / clinic) */
+.img-frame--landscape { aspect-ratio: 4 / 3; }
+.img-frame--services { width: 260px; flex-shrink: 0; }
+.img-frame--clinic { width: 100%; max-width: 340px; margin-top: 28px; }
+
+/* Wide banner crop (approach / wellbeing) */
+.img-frame--banner { aspect-ratio: 21 / 8; margin-bottom: 56px; }
+
+.section__head--split {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+/* ==========================================================
+   WHATSAPP BUTTON + PANEL
+   ========================================================== */
+.icon-whatsapp {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+.btn--whatsapp { gap: 10px; }
+
+.whatsapp-panel {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: 40px 36px;
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+}
+.whatsapp-panel__icon {
+  display: inline-flex;
+  width: 52px; height: 52px;
+  align-items: center; justify-content: center;
+  border-radius: 14px;
+  background: var(--color-accent-soft);
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+.whatsapp-panel__icon svg { width: 26px; height: 26px; }
+.whatsapp-panel h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.3rem;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+.whatsapp-panel > p { color: var(--color-ink-soft); font-size: 0.94rem; margin-bottom: 24px; max-width: 46ch; }
+.whatsapp-panel__note {
+  margin-top: 22px;
+  font-size: 0.84rem;
+  color: var(--color-ink-soft);
+  background: var(--color-surface);
+  border-radius: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-line);
+}
 
 /* ==========================================================
    ABOUT
@@ -303,16 +422,6 @@ body {
   gap: 64px;
   align-items: start;
 }
-.about__portrait-frame { position: relative; }
-.about__art { border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
-.about__portrait-caption {
-  margin-top: 12px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--color-ink-soft);
-  text-align: center;
-}
-
 .about__bio { margin-top: 18px; color: var(--color-ink-soft); max-width: 62ch; }
 
 .about__facts {
@@ -572,6 +681,7 @@ body {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
   gap: 64px;
+  align-items: start;
 }
 .contact__details { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
 .contact__details li { display: flex; gap: 14px; align-items: baseline; font-size: 0.98rem; }
@@ -586,71 +696,11 @@ body {
 }
 .contact__details a:hover { color: var(--color-accent); }
 
-.contact__whatsapp { margin-top: 28px; }
-
-.contact__privacy {
-  margin-top: 32px;
-  font-size: 0.84rem;
-  color: var(--color-ink-soft);
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  border: 1px solid var(--color-line);
-}
-
-.contact__form {
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-lg);
-  padding: 36px;
-  box-shadow: var(--shadow-sm);
-}
-.form__row { margin-bottom: 20px; }
-.form__row--split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-label { display: block; font-size: 0.86rem; font-weight: 600; color: var(--color-primary); margin-bottom: 8px; }
-.form__optional { font-weight: 400; color: var(--color-ink-soft); }
-input, select, textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--color-line-strong);
-  border-radius: 10px;
-  background: #fff;
-  font-size: 0.95rem;
-  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
-}
-input:focus, select:focus, textarea:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(185,131,75,0.15);
-  outline: none;
-}
-textarea { resize: vertical; }
-.form__error {
-  display: block;
-  min-height: 18px;
-  font-size: 0.78rem;
-  color: #B04A3C;
-  margin-top: 6px;
-}
-input.is-invalid, select.is-invalid, textarea.is-invalid { border-color: #B04A3C; }
-
 .contact__disclaimer {
   margin-top: 18px;
   font-size: 0.76rem;
   color: var(--color-ink-soft);
   line-height: 1.5;
-}
-
-.form__success {
-  margin-top: 18px;
-  background: var(--color-accent-soft);
-  color: var(--color-primary);
-  padding: 14px 16px;
-  border-radius: 10px;
-  font-size: 0.9rem;
 }
 
 /* ==========================================================
@@ -731,6 +781,9 @@ input.is-invalid, select.is-invalid, textarea.is-invalid { border-color: #B04A3C
   .timeline { grid-template-columns: 1fr; }
   .why__list { grid-template-columns: 1fr; }
   .footer__grid { grid-template-columns: repeat(2, 1fr); }
+  .section__head--split { flex-direction: column; align-items: flex-start; }
+  .img-frame--services { width: 100%; max-width: 340px; }
+  .img-frame--banner { aspect-ratio: 16 / 9; }
 }
 
 @media (max-width: 720px) {

@@ -1,4 +1,28 @@
 // ==========================================================
+// WHATSAPP CONFIGURATION
+// Edit these two values only — every "Book an Appointment" /
+// WhatsApp button on the site reads from here.
+// Number must be in international format, digits only
+// (country code + number, no +, spaces, or leading 0).
+// Example for Pakistan: "923001234567"
+// ==========================================================
+const WHATSAPP_NUMBER = "92XXXXXXXXXX";
+const PSYCHOLOGIST_NAME = "Sadia Sikander";
+const WHATSAPP_MESSAGE = `Hello, I would like to book an appointment with ${PSYCHOLOGIST_NAME}.`;
+
+// ==========================================================
+// Wire up every WhatsApp button on the page
+// ==========================================================
+const buildWhatsAppUrl = () =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
+document.querySelectorAll('[data-whatsapp-link]').forEach(link => {
+  link.setAttribute('href', buildWhatsAppUrl());
+  link.setAttribute('target', '_blank');
+  link.setAttribute('rel', 'noopener noreferrer');
+});
+
+// ==========================================================
 // Mobile nav toggle
 // ==========================================================
 const navToggle = document.getElementById('navToggle');
@@ -83,66 +107,6 @@ accordionTriggers.forEach(trigger => {
     trigger.setAttribute('aria-expanded', String(!isOpen));
     panel.style.maxHeight = isOpen ? null : `${panel.scrollHeight}px`;
   });
-});
-
-// ==========================================================
-// Appointment form validation (prototype only — no submission)
-// ==========================================================
-const form = document.getElementById('appointmentForm');
-const formSuccess = document.getElementById('formSuccess');
-
-const validators = {
-  name: value => value.trim().length >= 2 || 'Please enter your full name.',
-  email: value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || 'Please enter a valid email address.',
-  phone: value => /^[0-9+\-\s()]{7,}$/.test(value) || 'Please enter a valid phone number.',
-  date: value => value.trim().length > 0 || 'Please select a preferred date.',
-  sessionType: value => value.trim().length > 0 || 'Please select a session type.',
-};
-
-const showError = (field, message) => {
-  const input = form.elements[field];
-  const errorEl = form.querySelector(`[data-error-for="${field}"]`);
-  if (message) {
-    input.classList.add('is-invalid');
-    errorEl.textContent = message;
-  } else {
-    input.classList.remove('is-invalid');
-    errorEl.textContent = '';
-  }
-};
-
-Object.keys(validators).forEach(field => {
-  const input = form.elements[field];
-  input.addEventListener('blur', () => {
-    const result = validators[field](input.value);
-    showError(field, result === true ? '' : result);
-  });
-});
-
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  let isValid = true;
-
-  Object.keys(validators).forEach(field => {
-    const input = form.elements[field];
-    const result = validators[field](input.value);
-    if (result !== true) {
-      isValid = false;
-      showError(field, result);
-    } else {
-      showError(field, '');
-    }
-  });
-
-  if (isValid) {
-    formSuccess.hidden = false;
-    formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    form.reset();
-    setTimeout(() => { formSuccess.hidden = true; }, 6000);
-  } else {
-    const firstInvalid = form.querySelector('.is-invalid');
-    if (firstInvalid) firstInvalid.focus();
-  }
 });
 
 // ==========================================================
